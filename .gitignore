@@ -1,0 +1,11 @@
+# Environment variables
+.env
+
+.idea
+node_modules
+# Compiled files
+*.pyc
+__pycache__/
+
+# Migrations
+migrations/
