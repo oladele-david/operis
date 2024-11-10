@@ -1,5 +1,6 @@
 import uuid
-from  app.extensions import db
+from sqlalchemy.dialects.postgresql import UUID
+from app.extensions import db
 
 class Finance(db.Model):
     """
@@ -7,8 +8,8 @@ class Finance(db.Model):
     """
     __tablename__ = 'finance'
 
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    business_id = db.Column(db.String(36), db.ForeignKey('businesses.id'), nullable=False)
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    business_id = db.Column(UUID(as_uuid=True), db.ForeignKey('businesses.id'), nullable=False)
     description = db.Column(db.String(200), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     type = db.Column(db.String(50), nullable=False)  # 'income' or 'expense'

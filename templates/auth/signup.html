@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Account - Operis</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<div class="bg-white rounded-lg shadow-md w-full max-w-md p-8">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-blue-600 mb-2">Create Your Account</h1>
+        <p class="text-gray-600">Join Operis to manage your business efficiently.</p>
+    </header>
+
+    <form
+            method="POST"
+            hx-post="{{ url_for('auth_route.signup') }}"
+            hx-target="#form-messages"
+            hx-indicator="#loader"
+            class="space-y-6">
+
+        <div>
+            <label for="businessName" class="block text-sm font-medium text-gray-700 mb-1">Business Name</label>
+            <input type="text" id="businessName" name="businessName" required
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+                   placeholder="Your Business Name">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                <input type="text" id="firstName" name="firstName" required
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+                       placeholder="John">
+            </div>
+            <div>
+                <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                <input type="text" id="lastName" name="lastName" required
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+                       placeholder="Doe">
+            </div>
+        </div>
+
+        <div>
+            <label for="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" required
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+                   placeholder="(123) 456-7890">
+        </div>
+
+        <div>
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <input type="email" id="email" name="email" required
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+                   placeholder="john@example.com"
+                   hx-post="/check-email"
+                   hx-trigger="change"
+                   hx-target="#email-validation">
+            <div id="email-validation" class="text-sm mt-1"></div>
+        </div>
+
+        <div>
+            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <input type="password" id="password" name="password" required
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+                   placeholder="••••••••"
+                   hx-post="/validate-password"
+                   hx-trigger="keyup changed delay:500ms"
+                   hx-target="#password-validation">
+            <div id="password-validation" class="text-sm mt-1"></div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="submitBtn"
+                class="relative flex justify-center items-center w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out">
+            <span id="button-text">Sign Up</span>
+            <!-- Loader (inline spinner) -->
+            <div id="loader"
+                 class="hidden relative flex justify-center items-center w-full bg-blue-600 py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out">
+                <svg class="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C6.477 0 0 6.477 0 12h4zm2 5.291l2.121 2.121A8.001 8.001 0 004 12H0c0 3.042 1.135 5.824 3 7.932z">
+                    </path>
+                </svg>
+            </div>
+        </button>
+
+    </form>
+
+    <div id="form-messages" class="mt-4 text-center"></div>
+
+    <p class="mt-8 text-center text-sm text-gray-600">
+        Already have an account?
+        <a href="{{ url_for('auth_route.login') }}" class="font-medium text-blue-600 hover:text-blue-500">Log in
+            here</a>
+    </p>
+</div>
+
+<script>
+    document.addEventListener('htmx:configRequest', (event) => {
+        const loader = document.querySelector('#loader');
+        const buttonText = document.querySelector('#button-text');
+        loader.classList.remove('hidden'); // Show loader
+        buttonText.classList.add('hidden'); // Hide button text
+    });
+
+    document.addEventListener('htmx:afterRequest', (event) => {
+        const loader = document.querySelector('#loader');
+        const buttonText = document.querySelector('#button-text');
+        loader.classList.add('hidden'); // Hide loader
+        buttonText.classList.remove('hidden'); // Show button text
+    });
+
+    document.addEventListener('htmx:beforeSwap', (event) => {
+        // Handle redirects
+        const redirectUrl = event.detail.xhr.getResponseHeader('HX-Redirect');
+        if (redirectUrl) {
+            window.location.href = redirectUrl;
+            event.preventDefault();
+        }
+    });
+</script>
+
+</body>
+</html>

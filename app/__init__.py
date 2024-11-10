@@ -6,7 +6,7 @@ pymysql.install_as_MySQLdb()
 
 from .extensions import db, migrate, login_manager
 # from .routes import dashboard_bp
-#from app.routes.auth import auth_bp
+from app.routes import auth_bp, finance_bp, dashboard_bp
 # from .admin.initialize_admin import initialize_admin
 from .errors import errors_bp
 
@@ -28,7 +28,9 @@ def create_app():
     # initialize_admin(app)
 
     # Register blueprints
-#    app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(finance_bp, url_prefix='/finance')
+    app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
     app.register_blueprint(errors_bp)
 
     return app

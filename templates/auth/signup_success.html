@@ -1,0 +1,10 @@
+<div class="text-center">
+    <h2 class="text-green-600 font-bold mb-4">{{ message }}</h2>
+    <p>Welcome to {{ business_name }}</p>
+</div>
+
+<script>
+    setTimeout(() => {
+        window.location.href = "{{ redirect_url }}";
+    }, 3000); // Redirect after 3 seconds
+</script>

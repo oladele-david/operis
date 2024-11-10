@@ -1,4 +1,5 @@
 from app.extensions import db
+from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
 
@@ -8,9 +9,9 @@ class UserBusinessAssociation(db.Model):
     """
     __tablename__ = 'user_business_association'
 
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
-    business_id = db.Column(db.String(36), db.ForeignKey('businesses.id'), nullable=False)
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.id'), nullable=False)
+    business_id = db.Column(UUID(as_uuid=True), db.ForeignKey('businesses.id'), nullable=False)
     role = db.Column(db.String(50), nullable=False, default='staff')  # e.g., 'staff', 'owner'
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())

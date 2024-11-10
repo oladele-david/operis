@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Dasboard</h1>
+    <h3>welcome {{ current_user.first_name }}</h3>
+    <p> you are in {{ current_user }}</p>
+    <p> you are in {{ business.name }}</p>
+    <p> you are a {{ role }}</p>
+
+
+    <a href="{{ url_for('auth_route.logout') }}" class="navbar-author-wrapper-list-item"> Sign Out </a>
+</body>
+</html>

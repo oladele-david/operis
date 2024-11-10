@@ -1,3 +1,4 @@
+from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from app.extensions import db
 
@@ -7,8 +8,8 @@ class Inventory(db.Model):
     """
     __tablename__ = 'inventory'
 
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    business_id = db.Column(db.String(36), db.ForeignKey('businesses.id'), nullable=False)
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    business_id = db.Column(UUID(as_uuid=True), db.ForeignKey('businesses.id'), nullable=False)
     product_name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Float, nullable=False, default=0.0)
     price_per_unit = db.Column(db.Float, nullable=False)

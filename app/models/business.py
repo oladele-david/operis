@@ -1,4 +1,5 @@
 import uuid
+from sqlalchemy.dialects.postgresql import UUID
 from app.extensions import db
 
 
@@ -8,7 +9,7 @@ class Business(db.Model):
     """
     __tablename__ = 'businesses'
 
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = db.Column(db.String(100), nullable=False, unique=True)
     description = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
@@ -33,4 +34,4 @@ class Business(db.Model):
     )
 
     def __repr__(self):
-        return f"<Business {self.name}>"
+        return f"<Business {self.id},{self.name}, {self.description}>"
