@@ -3,172 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operis - Login</title>
+    <title>Login - Operis</title>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-
-    <style>
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .fade-in {
-            animation: fadeIn 0.3s ease-in-out;
-        }
-    </style>
 </head>
-<body class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-    <div class="w-full max-w-md bg-white rounded-lg shadow-md overflow-hidden">
-        <div class="p-6 space-y-6">
-            <div class="text-center">
-                <h1 class="text-2xl font-bold text-blue-600">Operis</h1>
-                <p class="text-sm text-gray-600">Fuel and Oil Sales Tracking</p>
-            </div>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<div class="bg-white rounded-lg shadow-md w-full max-w-md p-8">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-blue-600 mb-2">Login to Operis</h1>
+        <p class="text-gray-600">Access your business management system</p>
+    </header>
 
-            <div class="space-y-4">
-                <!-- Business Search -->
-                <div>
-                    <label for="business-search" class="block text-sm font-medium text-gray-700 mb-1">Select Business</label>
-                    <div class="relative">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <input type="text" id="business-search" name="business-search" 
-                               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                               placeholder="Search for a business"
-                               hx-get="/search-businesses"
-                               hx-trigger="keyup changed delay:500ms"
-                               hx-target="#business-results">
-                    </div>
-                    <div id="business-results" class="mt-1 w-full bg-white shadow-lg rounded-md overflow-hidden"></div>
-                </div>
-
-                <!-- Staff Selection -->
-                <div id="staff-selection" class="hidden fade-in">
-                    <label for="staff-select" class="block text-sm font-medium text-gray-700 mb-1">Select Staff Member</label>
-                    <select id="staff-select" name="staff-select" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                            hx-get="/select-staff"
-                            hx-trigger="change"
-                            hx-target="#login-form">
-                        <option value="">Choose a staff member</option>
-                    </select>
-                </div>
-
-                <!-- Login Form -->
-                <div id="login-form" class="hidden fade-in">
-                    <form hx-post="/login" class="space-y-4">
-                        <div>
-                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                            <input type="password" id="password" name="password" required 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <button type="submit" 
-                                class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out">
-                            Log In
-                        </button>
-                    </form>
-                </div>
+    <form hx-post="/login" hx-target="#form-messages" class="space-y-6">
+        <div>
+            <label for="businessSearch" class="block text-sm font-medium text-gray-700 mb-1">Select your
+                business</label>
+            <div class="relative">
+                <select data-width="100%" id="businessSearch" name="businessSearch" required
+                        class="w-full pl-3 pr-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+                    <!-- Options will be populated dynamically using Select2 -->
+                </select>
             </div>
         </div>
 
-        <!-- Business Owner Login -->
-        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
-            <button id="owner-login-toggle" 
-                    class="text-blue-600 hover:text-blue-800 font-medium focus:outline-none"
-                    hx-get="/owner-login-form"
-                    hx-target="#owner-login-form"
-                    hx-swap="innerHTML">
-                Log in as Business Owner
+        <div id="login-fields" class="space-y-4 hidden">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input type="email" id="email" name="email" required
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+                       placeholder="you@example.com">
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <input type="password" id="password" name="password" required
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+                       placeholder="••••••••">
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out">
+                Log In
             </button>
-            <div id="owner-login-form" class="mt-4"></div>
         </div>
-    </div>
+    </form>
 
-    <script>
-        // Simulated business search results
-        document.body.addEventListener('htmx:afterRequest', function(event) {
-            if (event.detail.target.id === 'business-results') {
-                const results = ['Fuel Co.', 'Oil Inc.', 'Energy Ltd.'];
-                let html = '<ul class="py-1">';
-                results.forEach(business => {
-                    html += `<li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" hx-get="/select-business" hx-target="#staff-selection" hx-swap="innerHTML show:top">${business}</li>`;
-                });
-                html += '</ul>';
-                event.detail.target.innerHTML = html;
+    <div id="form-messages" class="mt-4 text-center"></div>
+
+    <p class="mt-8 text-center text-sm text-gray-600">
+        Don't have an account?
+        <a href="/signup" class="font-medium text-blue-600 hover:text-blue-500">Sign up here</a>
+    </p>
+</div>
+
+<script>
+    // Initialize Select2 for the business search
+    $(document).ready(function () {
+        $('#businessSearch').select2({
+            placeholder: "Type to search for your business",
+            minimumInputLength: 2,
+            ajax: {
+                url: '/search-business',
+                method: 'POST',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term // Search term
+                    };
+                },
+                processResults: function (data) {
+                    console.log("Data received:", data); // Debugging log
+                    return {
+                        results: data.map(function (item) {
+                            return {id: item.id, text: item.value}; // Correct mapping
+                        })
+                    };
+                },
+                cache: true
             }
         });
 
-        // Simulated staff selection
-        document.body.addEventListener('htmx:afterRequest', function(event) {
-            if (event.detail.target.id === 'staff-selection') {
-                const staffMembers = [
-                    { id: 1, name: 'John Doe', role: 'Manager' },
-                    { id: 2, name: 'Jane Smith', role: 'Salesperson' },
-                    { id: 3, name: 'Mike Johnson', role: 'Technician' },
-                    { id: 4, name: 'Sarah Brown', role: 'Administrator' }
-                ];
-                let html = `
-                    <label for="staff-select" class="block text-sm font-medium text-gray-700 mb-1">Select Staff Member</label>
-                    <select id="staff-select" name="staff-select" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                            hx-get="/select-staff"
-                            hx-trigger="change"
-                            hx-target="#login-form">
-                        <option value="">Choose a staff member</option>
-                `;
-                staffMembers.forEach(staff => {
-                    html += `<option value="${staff.id}">${staff.name} - ${staff.role}</option>`;
-                });
-                html += '</select>';
-                event.detail.target.innerHTML = html;
-                event.detail.target.classList.remove('hidden');
-            }
+        // Show login fields when a business is selected
+        $('#businessSearch').on('select2:select', function () {
+            document.getElementById('login-fields').classList.remove('hidden');
         });
-
-        // Simulated staff selection response
-        document.body.addEventListener('htmx:afterRequest', function(event) {
-            if (event.detail.target.id === 'login-form') {
-                event.detail.target.innerHTML = `
-                    <form hx-post="/login" class="space-y-4">
-                        <div>
-                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                            <input type="password" id="password" name="password" required 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <button type="submit" 
-                                class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out">
-                            Log In
-                        </button>
-                    </form>
-                `;
-                event.detail.target.classList.remove('hidden');
-            }
-        });
-
-        // Simulated owner login form
-        document.body.addEventListener('htmx:afterRequest', function(event) {
-            if (event.detail.target.id === 'owner-login-form') {
-                event.detail.target.innerHTML = `
-                    <form hx-post="/owner-login" class="space-y-4">
-                        <div>
-                            <label for="owner-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                            <input type="email" id="owner-email" name="owner-email" required 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label for="owner-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                            <input type="password" id="owner-password" name="owner-password" required 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <button type="submit" 
-                                class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out">
-                            Log In as Owner
-                        </button>
-                    </form>
-                `;
-            }
-        });
-    </script>
+    });
+</script>
 </body>
 </html>

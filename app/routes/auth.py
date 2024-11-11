@@ -1,11 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, jsonify
 from flask_login import login_user, login_required, logout_user
 from psycopg2.errors import UniqueViolation
 from sqlalchemy.exc import IntegrityError
 
-from app.crud.auth import create_business_and_user
+from app.crud.auth import create_business_and_user, login_user_to_business
 from app.extensions import db
-from app.models import User
+from app.models import User, Business
 
 auth_bp = Blueprint('auth_route', __name__)
 
@@ -87,18 +87,45 @@ def validate_password():
     return "Password strength: Good", 200
 
 
+@auth_bp.route('/search-business', methods=['POST'])
+def search_business():
+    """Search for businesses by name."""
+    search_term = request.form.get('q', '').strip()
+    if not search_term:
+        return jsonify([])
+
+    businesses = Business.query.filter(Business.name.ilike(f"%{search_term}%")).all()
+    suggestions = [{'value': business.name, 'id': str(business.id)} for business in businesses]
+    return jsonify(suggestions)
+
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    """Login route where users select a business and authenticate."""
     if request.method == 'POST':
+        business_id = request.form.get('businessSearch')
         email = request.form.get('email')
         password = request.form.get('password')
 
-        user = User.query.filter_by(email=email).first()
+        try:
+            # Process login via CRUD function
+            user, business, role = login_user_to_business(email, password, business_id)
 
-        if user and user.check_password(password):
-            login_user(user)
-            flash("Login successful!", 'success')
+            success_message = f"Welcome {user.first_name}! You are logged into {business.name} as {role}."
+            if request.headers.get('HX-Request'):
+                return render_template('auth/login_success.html', mmessage=success_message, business_name=business.name,
+                    redirect_url=url_for('dashboard_route.dashboard'))
+
+            flash(success_message, "success")
             return redirect(url_for('dashboard_route.dashboard'))
+
+        except ValueError as e:
+            error_message = str(e)
+            if request.headers.get('HX-Request'):
+                return render_template('auth/login_error.html', error=error_message)
+            flash(error_message, "error")
+            return render_template('auth/login.html')
+
+    # GET request: Render the login page
     return render_template('auth/login.html')
 
 @auth_bp.route('/logout')
