@@ -1,88 +1,116 @@
+{% extends "base.html" %}
 
-{#    <h1>Dasboard</h1>#}
-{#    <h3>welcome {{ current_user.first_name }}</h3>#}
-{#    <p> you are in {{ current_user }}</p>#}
-{#    <p> you are in {{ business.name }}</p>#}
-{#    <p> you are a {{ role }}</p>#}
+{% block title %}Profile Dashboard | Operis{% endblock %}
 
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Operis</title>
-     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-</head>
-<body class="bg-gray-100 h-screen flex">
-
-    <!-- Sidebar -->
-    <div class="bg-blue-800 text-white w-64 space-y-6 py-7 px-2 h-full">
-        <h2 class="text-2xl font-semibold text-center text-white">Operis</h2>
-        <nav>
-            <ul class="space-y-4">
-                <li><a href="#" class="text-gray-300 hover:text-white">Dashboard</a></li>
-                <li><a href="#" class="text-gray-300 hover:text-white">Profile</a></li>
-                <li><a href="#" class="text-gray-300 hover:text-white">Reports</a></li>
-                <li><a href="#" class="text-gray-300 hover:text-white">Settings</a></li>
-                <li><a href="{{ url_for('auth_route.logout') }}" class="text-gray-300 hover:text-white">Logout</a></li>
-            </ul>
-        </nav>
-    </div>
-
-    <!-- Main Content -->
-    <div class="flex-1 flex flex-col">
-
-        <!-- Top Header -->
-        <header class="bg-white shadow-md py-4 px-6 flex justify-between items-center">
-            <div class="text-2xl font-semibold text-gray-700">Dashboard</div>
-            <div class="space-x-4">
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none">
-                    Notifications
-                </button>
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none">
-                    User Profile
-                </button>
-            </div>
-        </header>
-
-        <!-- Quick Access Buttons Section -->
-        <div class="flex justify-center items-center space-x-4 py-6 px-6">
-            <button class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700">
-                Quick Access 1
-            </button>
-            <button class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700">
-                Quick Access 2
-            </button>
-            <button class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700">
-                Quick Access 3
-            </button>
-        </div>
-
-        <!-- Main Dashboard Content -->
-        <div class="flex-grow p-6">
-            <div class="grid grid-cols-3 gap-6">
-                <!-- Card 1 -->
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-semibold text-gray-700">Recent Activity</h3>
-                    <p class="text-gray-500">Here you can see the latest activity.</p>
+{% block content %}
+    <main class="flex-1 overflow-y-auto bg-gray-100 p-4 sm:p-6 lg:p-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <!-- Business Overview Section -->
+                <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 col-span-1 md:col-span-2 grid-flow-col">
+                    <h1 class="text-2xl font-bold text-gray-900 mb-4">Business Overview</h1>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:grid-cols-3">
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-700">Business Name</h2>
+                            <p class="text-gray-600">{{ business.name | upper }}</p>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-700">Location</h2>
+                            <p class="text-gray-600">Lagos</p>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-700">Total Sales Today</h2>
+                            <p class="text-2xl font-bold text-green-600">N1,234.56</p>
+                        </div>
+                    </div>
                 </div>
-                <!-- Card 2 -->
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-semibold text-gray-700">Sales Performance</h3>
-                    <p class="text-gray-500">See how your sales are performing.</p>
-                </div>
-                <!-- Card 3 -->
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-semibold text-gray-700">Upcoming Tasks</h3>
-                    <p class="text-gray-500">Manage your tasks effectively.</p>
+
+                <!-- Quick Access Section -->
+                <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Access</h2>
+                    <div class="space-y-4">
+                        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out">
+                            Record a Sale
+                        </button>
+                        <button class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out">
+                            Add an Expense
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-    </div>
+            <!-- Latest Sales Section -->
+            <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 mb-4">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Latest Sales</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-05-01</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Widget A</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$250.00</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-05-01</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Gadget B</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$150.00</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-04-30</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Gizmo C</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$180.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-</body>
-</html>
+            <!-- Inventory Section -->
+            <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 mb-4">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Inventory Summary</h2>
+                <ul class="space-y-3">
+                    <li class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700">Widget A</span>
+                        <span class="text-sm text-gray-600">150 units</span>
+                    </li>
+                    <li class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700">Gadget B</span>
+                        <span class="text-sm text-gray-600">75 units</span>
+                    </li>
+                    <li class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700">Gizmo C</span>
+                        <span class="text-sm text-gray-600">200 units</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Insights Section -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Top-Selling Product</h3>
+                    <p class="text-2xl font-bold text-blue-600">Widget A</p>
+                    <p class="text-sm text-gray-600">50 units sold this month</p>
+                </div>
+                <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Monthly Sales</h3>
+                    <p class="text-2xl font-bold text-green-600">$15,678.90</p>
+                    <p class="text-sm text-gray-600">12% increase from last month</p>
+                </div>
+                <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Upcoming Restocks</h3>
+                    <p class="text-2xl font-bold text-yellow-600">3 Products</p>
+                    <p class="text-sm text-gray-600">Due in the next 7 days</p>
+                </div>
+            </div>
+        </main>
+{% endblock %}

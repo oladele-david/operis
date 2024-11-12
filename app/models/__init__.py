@@ -3,3 +3,7 @@ from .business import Business
 from .finance import Finance
 from .inventory import Inventory
 from .user_business_association import UserBusinessAssociation
+from .sale import Sale
+from .product import Product
+from .restock_history import RestockHistory
+from .price_history import PriceHistory

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} Dashboard | Operis {% endblock %}</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/lucide-icons@0.321.0/dist/umd/lucide-icons.min.js" rel="stylesheet">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- Header -->
+    {% include 'components/header.html' %}
+
+    <div class="flex-1 flex overflow-hidden relative">
+        <!-- Sidebar -->
+        {% include 'components/sidebar.html' %}
+
+        <!-- Main content -->
+        {% block content %}{% endblock %}
+
+    </div>
+
+    <!-- Footer -->
+    {% include 'components/footer.html' %}
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('main');
+
+        mobileMenuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        mainContent.addEventListener('click', () => {
+            if (window.innerWidth < 768 && !sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+
+        // User menu toggle
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userMenu = document.getElementById('user-menu');
+
+        userMenuButton.addEventListener('click', () => {
+            userMenu.classList.toggle('hidden');
+        });
+
+        // Settings menu toggle
+        const settingsMenuButton = document.getElementById('settings-menu-button');
+        const settingsMenu = document.getElementById('settings-menu');
+
+        settingsMenuButton.addEventListener('click', () => {
+            settingsMenu.classList.toggle('hidden');
+        });
+
+        // Close menus when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!userMenu.contains(event.target) && !userMenuButton.contains(event.target)) {
+                userMenu.classList.add('hidden');
+            }
+
+            if (!settingsMenu.contains(event.target) && !settingsMenuButton.contains(event.target)) {
+                settingsMenu.classList.add('hidden');
+            }
+        });
+
+        // Adjust sidebar behavior on window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                sidebar.classList.remove('-translate-x-full');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+    </script>
+</body>
+</html>
